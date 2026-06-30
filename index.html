@@ -52,7 +52,7 @@
                 const contentDiv = document.getElementById('post-content');
                 
                 // 마크다운 문법(#, -, * 등)이 들어간 메모장 글을 브라우저에 그대로 주입합니다
-                contentDiv.innerText = textData;
+                contentDiv.innerHTML = marked.parse(textData);
                 contentDiv.style.display = 'block';
                 
                 // 글 내용 위치로 화면을 부드럽게 스크롤해줍니다
