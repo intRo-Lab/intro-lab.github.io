@@ -7,16 +7,21 @@
         body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
         h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .post-list { list-style: none; padding: 0; }
-        .post-list li { margin: 10px 0; cursor: pointer; color: #0066cc; text-decoration: underline; }
-        /* 글 내용이 출력되는 박스 (줄바꿈을 그대로 유지하도록 white-space 속성 추가) */
+        .post-list li { margin: 10px 0; cursor: pointer; color: #0066cc; text-decoration: underline; font-weight: bold; }
+        
+        /* [개선] 글 내용이 들어가는 박스 디자인을 깔끔하게 다듬었습니다 */
         #post-content { 
             margin-top: 30px; 
-            padding: 20px; 
-            border: 1px solid #ddd; 
-            background: #f9f9f9; 
+            padding: 25px; 
+            border: 1px solid #e1e4e8; 
+            border-radius: 6px;
+            background: #ffffff; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: none; 
-            white-space: pre-wrap; /* 엔터와 공백을 화면에 그대로 보여줍니다 */
+            white-space: pre-wrap;       /* 메모장처럼 줄바꿈과 띄어쓰기를 완벽 유지 */
             word-break: break-all;
+            font-size: 15px;
+            color: #24292e;
         }
     </style>
 </head>
@@ -24,26 +29,36 @@
 
     <h1>📝 나의 블로그 포스트</h1>
     
-    <!-- 1. 포스트 리스트가 나타나는 곳 -->
+    <!-- 1. 포스트 리스트 -->
     <ul class="post-list">
-        <!-- 새 글을 쓰면 아래 목록에 파일명을 똑같이 추가해 주세요 -->
+        <!-- 클릭 시 파일명 뒤에 임시 주소를 붙여 캐시 지연을 완벽 차단합니다 -->
         <li onclick="loadPost('post0001.md')">나의 첫 번째 블로그 글 (2026-06-30)</li>
     </ul>
 
-    <!-- 2. 클릭한 글 내용이 보이는 곳 -->
+    <!-- 2. 글 내용 Preview가 나타나는 곳 -->
     <div id="post-content"></div>
 
     <script>
-        // 외부 주소(CDN) 없이 브라우저 내장 기능만으로 파일을 읽어옵니다
         async function loadPost(fileName) {
-            // [수정] 파일명 뒤에 매번 바뀌는 임시 번호(?v=시간)를 붙여 서버 캐시를 강제로 파괴합니다
-            const response = await fetch(`${fileName}?v=${Date.now()}`);
-            const textData = await response.text();
-            
-            const contentDiv = document.getElementById('post-content');
-            // 내장된 안전한 텍스트 삽입 기능(innerText)을 사용합니다
-            contentDiv.innerText = textData;
-            contentDiv.style.display = 'block';
+            try {
+                // [핵심] 파일명 뒤에 실시간 번호를 붙여 GitHub Pages의 무한 로딩을 완전히 무력화합니다
+                const response = await fetch(`${fileName}?v=${Date.now()}`);
+                
+                if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
+                
+                const textData = await response.text();
+                const contentDiv = document.getElementById('post-content');
+                
+                // 마크다운 문법(#, -, * 등)이 들어간 메모장 글을 브라우저에 그대로 주입합니다
+                contentDiv.innerText = textData;
+                contentDiv.style.display = 'block';
+                
+                // 글 내용 위치로 화면을 부드럽게 스크롤해줍니다
+                contentDiv.scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                alert('글을 불러오는 중 오류가 발생했습니다: ' + error.message);
+            }
         }
     </script>
 
