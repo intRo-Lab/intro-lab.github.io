@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>나의 심플 블로그</title>
+    <!-- [변경] 외부 사이트 주소가 아닌, 내 저장소에 업로드한 파일을 직접 불러옵니다 -->
+    <script src="marked.min.js"></script>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
         h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .post-list { list-style: none; padding: 0; }
         .post-list li { margin: 10px 0; cursor: pointer; color: #0066cc; text-decoration: underline; font-weight: bold; }
         
-        /* [개선] 글 내용이 들어가는 박스 디자인을 깔끔하게 다듬었습니다 */
         #post-content { 
             margin-top: 30px; 
             padding: 25px; 
@@ -18,11 +19,12 @@
             background: #ffffff; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: none; 
-            white-space: pre-wrap;       /* 메모장처럼 줄바꿈과 띄어쓰기를 완벽 유지 */
-            word-break: break-all;
             font-size: 15px;
             color: #24292e;
         }
+        /* 마크다운 변환 후 제목 스타일 정의 */
+        #post-content h1 { font-size: 24px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        #post-content h2 { font-size: 20px; }
     </style>
 </head>
 <body>
