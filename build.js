@@ -24,11 +24,10 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
         .post-content pre { background-color: #f6f8fa !important; padding: 16px; border-radius: 6px; overflow-x: auto; }
         .post-content code { font-family: Consolas, Monaco, monospace; font-size: 14px; }
         
-        /* 📱 본문 내부 모바일 반응형 디자인 보정 */
+        /* 📱 본문 내부 모바일 반응형 디자인 */
         @media (max-width: 480px) {
             body { margin: 20px auto; padding: 0 12px; }
             .post-content { padding: 15px; }
-            /* 마크다운 변환 후 들어오는 h1, h2 등 대제목 크기를 스마트폰에 맞게 대폭 축소 */
             .post-content h1 { font-size: 1.4rem !important; line-height: 1.4; }
             .post-content h2 { font-size: 1.2rem !important; }
             .post-content h3 { font-size: 1.1rem !important; }
@@ -61,17 +60,20 @@ const indexTemplate = (linksHtml) => `<!DOCTYPE html>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.7; }
         h1 { border-bottom: 2px solid #eee; padding-bottom: 12px; font-size: 2rem; }
         .post-list { list-style: none; padding: 0; }
-        .post-item { margin: 20px 0; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
-        .post-link { color: #0066cc; text-decoration: underline; font-weight: bold; font-size: 1.1rem; }
+        .post-item { margin: 22px 0; border-bottom: 1px dashed #eee; padding-bottom: 18px; }
         
-        /* 📱 메인 대문 모바일 반응형 디자인 보정 */
+        /* 💡 PC 화면 글 제목 크기 상향 (1.1rem -> 1.25rem) */
+        .post-link { color: #0066cc; text-decoration: underline; font-weight: bold; font-size: 1.25rem; }
+        .post-link:hover { color: #004499; }
+        
+        /* 📱 메인 대문 모바일 반응형 디자인 */
         @media (max-width: 480px) {
             body { margin: 20px auto; padding: 0 12px; }
-            /* '📝 나의 블로그 포스트' 메인 타이틀 크기 축소 */
-            h1 { font-size: 1.5rem; padding-bottom: 8px; }
-            /* 글 제목 목록 폰트 크기 및 간격 축소 */
-            .post-item { margin: 12px 0; padding-bottom: 10px; }
-            .post-link { font-size: 0.95rem; line-height: 1.4; }
+            h1 { font-size: 1.6rem; padding-bottom: 8px; }
+            .post-item { margin: 16px 0; padding-bottom: 12px; }
+            
+            /* 💡 모바일 화면 글 제목 크기 상향 조절 (0.95rem -> 1.1rem) */
+            .post-link { font-size: 1.1rem; line-6height: 1.4; }
         }
     </style>
 </head>
@@ -118,7 +120,7 @@ function buildBlog() {
 
     const finalIndex = indexTemplate(linksHtml || '<p>등록된 글이 없습니다.</p>');
     fs.writeFileSync(path.join(outputDir, 'index.html'), finalIndex, 'utf-8');
-    console.log('🎉 모바일 제목 크기 최적화 빌드 완료!');
+    console.log('🎉 홈화면 리스트 크기 최적화 완료!');
 }
 
 buildBlog();
