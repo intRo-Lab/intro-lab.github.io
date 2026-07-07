@@ -12,20 +12,19 @@
     <script src="python.min.js"></script>
     
     <style>
-        /* [모바일 대응] 기본 padding을 15px로 줄여 모바일 화면 공간 확보 */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
             max-width: 800px; 
             margin: 20px auto; 
             padding: 0 15px; 
             line-height: 1.6; 
-            word-break: break-word; /* 긴 단어가 화면 밖으로 나가는 것 방지 */
+            word-break: break-word; 
         }
         h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.8rem; }
-        .post-list { list-style: none; padding: 0; }
-        /* [모바일 대응] 터치하기 편하도록 세로 간격(margin)과 패딩을 살짝 넓힘 */
+        .post-list { list-style: none; padding: 0; margin-bottom: 10px; } /* 하단 마진 축소 */
+        
         .post-list li { 
-            margin: 15px 0; 
+            margin: 12px 0; 
             padding: 5px 0;
             cursor: pointer; 
             color: #0066cc; 
@@ -34,8 +33,8 @@
         }
         
         #post-content { 
-            margin-top: 25px; 
-            padding: 20px; /* 모바일 대응으로 내부 여백 살짝 축소 */
+            margin-top: 10px; /* 💡 목록 바로 밑에 딱 붙도록 여백을 25px -> 10px로 축소 */
+            padding: 20px; 
             border: 1px solid #e1e4e8; 
             border-radius: 6px;
             background: #ffffff; 
@@ -44,28 +43,25 @@
             font-size: 15px;
             color: #24292e;
         }
-        /* 마크다운 변환 후 제목 스타일 정의 */
         #post-content h1 { font-size: 22px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         #post-content h2 { font-size: 18px; }
 
-        /* 코드 블록 가독성을 높이기 위한 내부 여백 디자인 보정 */
         #post-content pre {
-            background-color: #f6f8fa !important; /* 깃허브 코드 배경색 강제 적용 */
-            padding: 12px; /* 모바일 대응으로 패딩 축소 */
+            background-color: #f6f8fa !important; 
+            padding: 12px; 
             border-radius: 6px;
-            overflow-x: auto; /* 가로 스크롤 활성화 */
-            -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤 지원 */
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
         }
         #post-content code {
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            font-size: 13px; /* 모바일에서 코드가 너무 커서 깨지지 않게 소폭 축소 */
+            font-size: 13px; 
         }
 
-        /* 📱 스마트폰 화면(최대 480px 이하)을 위한 미디어 쿼리 정의 */
         @media (max-width: 480px) {
             body { margin: 10px auto; padding: 0 10px; }
             h1 { font-size: 1.5rem; }
-            #post-content { padding: 15px; }
+            #post-content { padding: 15px; margin-top: 8px; }
             #post-content h1 { font-size: 18px; }
             #post-content h2 { font-size: 16px; }
         }
@@ -77,40 +73,4 @@
     
     <ul class="post-list">
         <li onclick="loadPost('post0002.md')">파이썬 코드 리뷰 테스트 (2026-07-07)</li>
-        <li onclick="loadPost('post0001.md')">나의 첫 번째 블로그 글 (2026-06-30)</li>
-    </ul>
-
-    <div id="post-content" class="markdown-body"></div>
-
-    <script>
-        // [🔥 해결] 폐기된 구형 marked.setOptions 문법을 완전히 삭제했습니다.
-
-        async function loadPost(fileName) {
-            try {
-                const response = await fetch(`${fileName}?v=${Date.now()}`);
-                
-                if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
-                
-                const textData = await response.text();
-                const contentDiv = document.getElementById('post-content');
-                
-                // 1. 마크다운을 순수 HTML문자열로 1차 변환하여 화면에 주입합니다.
-                contentDiv.innerHTML = marked.parse(textData);
-                contentDiv.style.display = 'block';
-                
-                // 2. [🔥 핵심 추가] 화면에 주입된 본문 안의 모든 코드 블록을 찾아 실시간으로 하이라이트를 즉시 적용합니다.
-                contentDiv.querySelectorAll('pre code').forEach((el) => {
-                    hljs.highlightElement(el);
-                });
-                
-                // 글 내용 위치로 화면을 부드럽게 스크롤해줍니다
-                contentDiv.scrollIntoView({ behavior: 'smooth' });
-                
-            } catch (error) {
-                alert('글을 불러오는 중 오류가 발생했습니다: ' + error.message);
-            }
-        }
-    </script>
-
-</body>
-</html>
+        <li onclick="loadPost('post0001.md')">나의 첫 번째 블로그 글 (20
