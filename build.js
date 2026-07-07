@@ -62,7 +62,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
         @media (max-width: 480px) {
             body, html { margin: 20px auto; padding: 0 12px; }
             .blog-header { padding-bottom: 8px; margin-bottom: 15px; }
-            .blog-header-title { font-size: 1.5rem; }
+            .blog-header-title { font-size: 1.2rem; }
             .home-btn { font-size: 0.85rem; padding: 4px 8px; }
             .post-content { padding: 15px; }
             .post-content table { font-size: 12px; }
