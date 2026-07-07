@@ -3,58 +3,49 @@ const path = require('path');
 const { marked } = require('marked');
 
 const postsDir = path.join(__dirname, 'posts');
-const outputDir = __dirname;
+// 💡 완성된 HTML 파일들이 저장될 하위 폴더 지정 ('pages' 폴더)
+const outputDir = path.join(__dirname, 'pages'); 
 
-// 1. 💡 본문 HTML 템플릿 (최상단에 블로그 제목 링크 추가)
+// 1. 본문 HTML 템플릿 (pages 폴더 내부에서 한 단계 위인 루트의 CSS/JS를 바라보도록 ../ 추가)
 const htmlTemplate = (title, content) => `<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} - 나의 심플 블로그</title>
-    <link rel="stylesheet" href="github-markdown.min.css">
-    <link rel="stylesheet" href="github.min.css">
-    <script src="highlight.js" defer></script>
-    <script src="python.min.js" defer></script>
+    <link rel="stylesheet" href="../github-markdown.min.css">
+    <link rel="stylesheet" href="../github.min.css">
+    <script src="../highlight.js" defer></script>
+    <script src="../python.min.js" defer></script>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.7; }
         
-        /* 💡 최상단 블로그 제목 스타일 */
         .blog-header-title { 
-            display: block;
-            font-size: 2rem; 
-            font-weight: bold; 
-            color: #24292e; 
-            text-decoration: none; 
-            border-bottom: 2px solid #eee; 
-            padding-bottom: 12px; 
-            margin-bottom: 20px;
+            display: block; font-size: 2rem; font-weight: bold; color: #24292e; text-decoration: none; border-bottom: 2px solid #eee; padding-bottom: 12px; margin-bottom: 20px;
         }
         .blog-header-title:hover { color: #0066cc; }
 
+        /* 💡 홈으로 돌아가는 링크도 한 단계 상위인 ../index.html로 지정 */
         .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: bold; }
         .back-link:hover { text-decoration: underline; }
         .post-content { padding: 30px; border: 1px solid #e1e4e8; border-radius: 8px; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .post-content pre { background-color: #f6f8fa !important; padding: 16px; border-radius: 6px; overflow-x: auto; }
         .post-content code { font-family: Consolas, Monaco, monospace; font-size: 14px; }
         
-        /* 📱 본문 내부 모바일 반응형 디자인 */
         @media (max-width: 480px) {
             body { margin: 20px auto; padding: 0 12px; }
             .blog-header-title { font-size: 1.6rem; padding-bottom: 8px; margin-bottom: 15px; }
             .post-content { padding: 15px; }
             .post-content h1 { font-size: 1.4rem !important; line-height: 1.4; }
             .post-content h2 { font-size: 1.2rem !important; }
-            .post-content h3 { font-size: 1.1rem !important; }
             .post-content pre { padding: 12px; }
             .post-content code { font-size: 12px; }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="blog-header-title">📝 intRo-Lab. Blog </a>
-
-    <a href="index.html" class="back-link">⬅️ 글 목록으로 돌아가기</a>
+    <a href="../index.html" class="blog-header-title">📝 나의 블로그 포스트</a>
+    <a href="../index.html" class="back-link">⬅️ 글 목록으로 돌아가기</a>
     <div class="post-content markdown-body">${content}</div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -66,7 +57,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
 </body>
 </html>`;
 
-// 2. 메인 목록(index.html) 템플릿
+// 2. 메인 목록(index.html) 템플릿 (루트에 위치하므로 CSS 및 경로 기본값 유지)
 const indexTemplate = (linksHtml) => `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -81,7 +72,6 @@ const indexTemplate = (linksHtml) => `<!DOCTYPE html>
         .post-link { color: #0066cc; text-decoration: underline; font-weight: bold; font-size: 1.25rem; }
         .post-link:hover { color: #004499; }
         
-        /* 📱 메인 대문 모바일 반응형 디자인 */
         @media (max-width: 480px) {
             body { margin: 20px auto; padding: 0 12px; }
             h1 { font-size: 1.6rem; padding-bottom: 8px; }
@@ -91,7 +81,7 @@ const indexTemplate = (linksHtml) => `<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <h1>📝 intRo-Lab. Blog </h1>
+    <h1>📝 나의 블로그 포스트</h1>
     <ul class="post-list">${linksHtml}</ul>
 </body>
 </html>`;
@@ -111,7 +101,10 @@ function parsePost(mdContent, defaultTitle) {
 }
 
 function buildBlog() {
+    // 💡 pages 폴더가 없으면 빌드 시점에 자동으로 생성합니다.
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
     if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir);
+    
     const files = fs.readdirSync(postsDir);
     const markdownFiles = files.filter(file => file.endsWith('.md')).sort().reverse();
 
@@ -126,14 +119,18 @@ function buildBlog() {
         
         const htmlContent = marked.parse(body);
         const finalHtml = htmlTemplate(title, htmlContent);
+        
+        // 💡 지정한 하위 폴더(pages/) 내부로 HTML 저장
         fs.writeFileSync(path.join(outputDir, `${fileNameWithoutExt}.html`), finalHtml, 'utf-8');
 
-        linksHtml += `<li class="post-item"><a href="${fileNameWithoutExt}.html" class="post-link">${title}</a></li>\n`;
+        // 💡 메인 목록에서 링크를 누를 때 pages/ 하위 경로로 타도록 주소 수정
+        linksHtml += `<li class="post-item"><a href="pages/${fileNameWithoutExt}.html" class="post-link">${title}</a></li>\n`;
     });
 
+    // index.html 자동 갱신 (index.html은 루트 자리에 그대로 생성)
     const finalIndex = indexTemplate(linksHtml || '<p>등록된 글이 없습니다.</p>');
-    fs.writeFileSync(path.join(outputDir, 'index.html'), finalIndex, 'utf-8');
-    console.log('🎉 최상단 블로그 제목 반영 완료!');
+    fs.writeFileSync(path.join(__dirname, 'index.html'), finalIndex, 'utf-8');
+    console.log('🎉 하위 폴더(pages/) 격리 및 빌드 완료!');
 }
 
 buildBlog();
