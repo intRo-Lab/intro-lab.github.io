@@ -49,7 +49,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
         
         .markdown-body img { max-width: 100%; height: auto; display: block; margin: 20px auto; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-        .markdown-body table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; border-collapse: collapse; margin-bottom: 1.5em; }
+        .markdown-body table { display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: nowrap; border-collapse: collapse; margin-bottom: 1.5em; }
         .markdown-body table th, .markdown-body table td { padding: 10px 14px; border: 1px solid #dfe2e5; }
         .markdown-body table th { background-color: #f6f8fa; font-weight: 600; }
         .markdown-body table tr:nth-child(even) { background-color: #f9f9f9; }
