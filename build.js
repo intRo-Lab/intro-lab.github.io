@@ -52,7 +52,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <a href="index.html" class="blog-header-title">📝 나의 블로그 포스트</a>
+    <a href="index.html" class="blog-header-title">📝 intRo-Lab. Blog </a>
 
     <a href="index.html" class="back-link">⬅️ 글 목록으로 돌아가기</a>
     <div class="post-content markdown-body">${content}</div>
