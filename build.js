@@ -16,7 +16,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - 나의 심플 블로그</title>
+    <title>${title} - intRo-Lab. Blog </title>
     ${ADSENSE_CODE} <link rel="stylesheet" href="../github-markdown.min.css">
     <link rel="stylesheet" href="../github.min.css">
     <script src="../highlight.js" defer></script>
