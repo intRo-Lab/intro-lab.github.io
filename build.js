@@ -92,14 +92,16 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
             }
             
             if (typeof renderMathInElement !== 'undefined') {
-                renderMathInElement(document.body, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},   
-                        {left: '$', right: '$', display: false},     
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
-                    ],
-                    throwOnError: false
+                document.querySelectorAll('.post-content').forEach((el) => {
+                    renderMathInElement(el, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},   
+                            {left: '$', right: '$', display: false},     
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false
+                    });
                 });
             }
         });
@@ -107,7 +109,7 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
 </body>
 </html>`;
 
-// 2. 메인 목록(index.html) 템플릿
+// 2. 메인 목록(index.html) 템플릿 (끊겼던 부분 연결 및 완성)
 const indexTemplate = (linksHtml) => `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -127,4 +129,64 @@ const indexTemplate = (linksHtml) => `<!DOCTYPE html>
         .post-link:hover { color: #004499; }
         
         @media (max-width: 480px) {
-            body { margin: 20px auto; padding: 0 12px;
+            body { margin: 20px auto; padding: 0 12px; }
+            .blog-header h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="blog-header">
+        <h1>📝 intRo-Lab. Blog</h1>
+        <a href="https://www.intro-lab.com" target="_blank" class="home-btn">🏠 홈으로 가기</a>
+    </header>
+    <main>
+        <ul class="post-list">
+            ${linksHtml}
+        </ul>
+    </main>
+</body>
+</html>`;
+
+// 3. 빌드 실행 로직 생성
+function build() {
+    // 출력 폴더(pages)가 없으면 생성
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    // posts 폴더 내의 마크다운 파일 읽기
+    if (!fs.existsSync(postsDir)) {
+        console.error("❌ 'posts' 폴더가 존재하지 않습니다.");
+        return;
+    }
+
+    const files = fs.readdirSync(postsDir).filter(file => file.endsWith('.md'));
+    let linksHtml = '';
+
+    files.forEach(file => {
+        const filePath = path.join(postsDir, file);
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        
+        // 파일명을 기반으로 타이틀 설정 (확장자 제거)
+        const title = path.basename(file, '.md');
+        
+        // 마크다운 -> HTML 변환
+        const htmlContent = marked(fileContent);
+        const fullHtml = htmlTemplate(title, htmlContent);
+        
+        // 변환된 HTML 파일 저장
+        const outputFileName = file.replace('.md', '.html');
+        fs.writeFileSync(path.join(outputDir, outputFileName), fullHtml, 'utf-8');
+        
+        // 메인 목록에 추가할 링크 HTML 생성
+        linksHtml += `<li class="post-item"><a class="post-link" href="pages/${outputFileName}">${title}</a></li>\n`;
+        console.log(`✅ 변환 완료: ${outputFileName}`);
+    });
+
+    // 메인 index.html 생성 (루트 경로 혹은 상위 폴더에 맞게 조정 필요)
+    const indexHtml = indexTemplate(linksHtml);
+    fs.writeFileSync(path.join(__dirname, 'index.html'), indexHtml, 'utf-8');
+    console.log('🎉 전체 블로그 빌드가 성공적으로 완료되었습니다! (index.html 업데이트됨)');
+}
+
+build();
