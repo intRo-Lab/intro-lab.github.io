@@ -50,6 +50,16 @@
         
         @media (max-width: 480px) {
             body, html { margin: 20px auto; padding: 0 12px; }
+
+            /* 3. 표(Table) 전용 반응형 설정 */
+            .markdown-body table { 
+                display: block !important; 
+                width: 100% !important; 
+                overflow-x: auto !important; /* 표 영역 안에서만 스크롤 허용 */
+                -webkit-overflow-scrolling: touch; 
+                white-space: nowrap; 
+            }
+            
             .blog-header { padding-bottom: 8px; margin-bottom: 15px; }
             .blog-header-title { font-size: 1.2rem !important; }
             .home-btn { font-size: 0.8rem; padding: 3px 6px; }
