@@ -7,7 +7,7 @@ const outputDir = path.join(__dirname, 'pages');
 
 const ADSENSE_CODE = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5588756282976438" crossorigin="anonymous"></script>`;
 
-// 1. 본문 HTML 템플릿 (수식 및 코드 글자 간격 벌어짐 레이아웃 버그 수정 버전)
+// 1. 본문 HTML 템플릿 (이미지 반응형 스타일 추가 버전)
 const htmlTemplate = (title, content) => `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -50,6 +50,16 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
         .back-link:hover { text-decoration: underline; }
         .post-content { padding: 30px; border: 1px solid #e1e4e8; border-radius: 8px; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .post-content pre { background-color: #f6f8fa !important; padding: 16px; border-radius: 6px; overflow-x: auto; }
+        
+        /* 💡 팁: 마크다운 내부 이미지가 본문 폭을 넘지 않도록 하고 중앙 정렬 */
+        .markdown-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
         
         /* 코드 블록 내부의 span 여백 변형 차단 */
         .post-content pre code, .post-content pre code span { 
