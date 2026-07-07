@@ -2,26 +2,40 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 심플 블로그</title>
-    <!-- [로컬] 마크다운 전체 레이아웃 스타일 파일 -->
     <link rel="stylesheet" href="github-markdown.min.css">
-    <!-- [로컬] 방금 다운로드한 코드 글자 하이라이트 색상 CSS 파일 -->
     <link rel="stylesheet" href="github.min.css">
     
-    <!-- [로컬] 자바스크립트 변환 및 하이라이트 엔진 파일 로드 -->
     <script src="marked.min.js"></script>
     <script src="highlight.js"></script>
     <script src="python.min.js"></script>
     
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-        h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        /* [모바일 대응] 기본 padding을 15px로 줄여 모바일 화면 공간 확보 */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+            line-height: 1.6; 
+            word-break: break-word; /* 긴 단어가 화면 밖으로 나가는 것 방지 */
+        }
+        h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.8rem; }
         .post-list { list-style: none; padding: 0; }
-        .post-list li { margin: 10px 0; cursor: pointer; color: #0066cc; text-decoration: underline; font-weight: bold; }
+        /* [모바일 대응] 터치하기 편하도록 세로 간격(margin)과 패딩을 살짝 넓힘 */
+        .post-list li { 
+            margin: 15px 0; 
+            padding: 5px 0;
+            cursor: pointer; 
+            color: #0066cc; 
+            text-decoration: underline; 
+            font-weight: bold; 
+        }
         
         #post-content { 
-            margin-top: 30px; 
-            padding: 25px; 
+            margin-top: 25px; 
+            padding: 20px; /* 모바일 대응으로 내부 여백 살짝 축소 */
             border: 1px solid #e1e4e8; 
             border-radius: 6px;
             background: #ffffff; 
@@ -31,19 +45,29 @@
             color: #24292e;
         }
         /* 마크다운 변환 후 제목 스타일 정의 */
-        #post-content h1 { font-size: 24px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        #post-content h2 { font-size: 20px; }
+        #post-content h1 { font-size: 22px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        #post-content h2 { font-size: 18px; }
 
         /* 코드 블록 가독성을 높이기 위한 내부 여백 디자인 보정 */
         #post-content pre {
             background-color: #f6f8fa !important; /* 깃허브 코드 배경색 강제 적용 */
-            padding: 16px;
+            padding: 12px; /* 모바일 대응으로 패딩 축소 */
             border-radius: 6px;
-            overflow: auto;
+            overflow-x: auto; /* 가로 스크롤 활성화 */
+            -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤 지원 */
         }
         #post-content code {
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            font-size: 14px;
+            font-size: 13px; /* 모바일에서 코드가 너무 커서 깨지지 않게 소폭 축소 */
+        }
+
+        /* 📱 스마트폰 화면(최대 480px 이하)을 위한 미디어 쿼리 정의 */
+        @media (max-width: 480px) {
+            body { margin: 10px auto; padding: 0 10px; }
+            h1 { font-size: 1.5rem; }
+            #post-content { padding: 15px; }
+            #post-content h1 { font-size: 18px; }
+            #post-content h2 { font-size: 16px; }
         }
     </style>
 </head>
@@ -51,13 +75,11 @@
 
     <h1>📝 나의 블로그 포스트</h1>
     
-    <!-- 1. 포스트 리스트 -->
     <ul class="post-list">
         <li onclick="loadPost('post0001.md')">나의 첫 번째 블로그 글 (2026-06-30)</li>
         <li onclick="loadPost('post0002.md')">파이썬 코드 리뷰 테스트 (2026-07-07)</li>
     </ul>
 
-    <!-- 2. class="markdown-body"를 명시해야 테마 CSS 파일의 스타일이 정상 작동합니다 -->
     <div id="post-content" class="markdown-body"></div>
 
     <script>
