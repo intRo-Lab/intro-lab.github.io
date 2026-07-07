@@ -8,7 +8,7 @@ const outputDir = path.join(__dirname, 'pages');
 const ADSENSE_CODE = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5588756282976438"
      crossorigin="anonymous"></script>`;
 
-// 1. 본문 HTML 템플릿 (KaTeX 폰트 오버라이딩 간섭 문제 해결 버전)
+// 1. 본문 HTML 템플릿 (KaTeX 간섭으로 인한 제목 폰트 깨짐 해결 버전)
 const htmlTemplate = (title, content) => `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -28,18 +28,20 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" defer></script>
 
     <style>
-        /* 💡 KaTeX가 일반 텍스트 폰트를 침범하지 못하도록 강제 우선순위(!important)를 부여합니다. */
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕", sans-serif !important; 
+        /* 💡 기본 전체 텍스트에 고딕체(산세리프) 스타일 지정 */
+        body, html, p, span, a, div { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Arial", "Malgun Gothic", "맑은 고딕", sans-serif; 
             max-width: 900px; 
             margin: 40px auto; 
             padding: 0 20px; 
             line-height: 1.7; 
+            color: #24292e;
         }
         
-        /* 💡 마크다운 영역 내부의 제목(H1 ~ H4) 폰트가 명조체로 깨지는 문제를 방지합니다. */
+        /* 💡 본문 내/외부의 모든 제목(H1~H6)이 명조체로 깨지는 문제를 방지합니다. */
+        h1, h2, h3, h4, h5, h6,
         .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "맑은 고딕", sans-serif !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Arial", "Malgun Gothic", "맑은 고딕", sans-serif !important;
             font-weight: bold;
         }
 
@@ -57,11 +59,11 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
         /* 🧮 수식 정렬 및 모바일 여백 보정 */
         .katex-display { margin: 1.2em 0; overflow-x: auto; overflow-y: hidden; }
         
-        /* 💡 오직 수식 기호 내부에만 KaTeX 전용 서체를 할당합니다. */
-        .katex { font-family: KaTeX_Main, Times New Roman, serif !important; }
+        /* 💡 오직 수식 기호 영역과 그 하위 요소들에만 KaTeX 전용 서체를 할당합니다. */
+        .katex, .katex * { font-family: KaTeX_Main, Times New Roman, serif !important; }
 
         @media (max-width: 480px) {
-            body { margin: 20px auto; padding: 0 12px; }
+            body, html, p, span, a, div { margin: 20px auto; padding: 0 12px; }
             .blog-header { padding-bottom: 8px; margin-bottom: 15px; }
             .blog-header-title { font-size: 1.5rem; }
             .home-btn { font-size: 0.85rem; padding: 4px 8px; }
@@ -95,8 +97,8 @@ const htmlTemplate = (title, content) => `<!DOCTYPE html>
                     delimiters: [
                         {left: '$$', right: '$$', display: true},   // 블록 수식
                         {left: '$', right: '$', display: false},     // 인라인 수식
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true}
+                        {left: '\\\\(', right: '\\\\)', display: false},
+                        {left: '\\\\[', right: '\\\\]', display: true}
                     ],
                     throwOnError: false
                 });
@@ -144,8 +146,9 @@ const indexTemplate = (linksHtml) => `<!DOCTYPE html>
 </body>
 </html>`;
 
+// 🛠️ 개선: \r?\n 정규식 적용으로 Windows 환경(CRLF) Front Matter 파싱 예외 차단
 function parsePost(mdContent, defaultTitle) {
-    const match = mdContent.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
+    const match = mdContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
     let title = defaultTitle;
     let body = mdContent;
 
@@ -174,7 +177,8 @@ function buildBlog() {
         
         const { title, body } = parsePost(mdContent, fileNameWithoutExt);
         
-        const htmlContent = marked.parse(body);
+        // 🛠️ 개선: marked 버전에 따른 동기 오류 방지를 위해 parseSync 명시적 호출
+        const htmlContent = marked.parseSync(body);
         const finalHtml = htmlTemplate(title, htmlContent);
         
         fs.writeFileSync(path.join(outputDir, `${fileNameWithoutExt}.html`), finalHtml, 'utf-8');
